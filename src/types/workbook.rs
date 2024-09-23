@@ -40,6 +40,23 @@ impl SheetsEnum {
             SheetsEnum::FileLike(f) => f.worksheet_range(name),
         }
     }
+
+    fn worksheet_merged_cells(
+        &mut self,
+        name: &str,
+    ) -> Option<Result<Vec<calamine::Dimensions>, Error>> {
+        match self {
+            SheetsEnum::File(Sheets::Xls(f)) => f.worksheet_merge_cells(name).map(Ok),
+            SheetsEnum::File(Sheets::Xlsx(f)) => f
+                .worksheet_merge_cells(name)
+                .map(|res| res.map_err(Error::Xlsx)),
+            SheetsEnum::FileLike(Sheets::Xls(f)) => f.worksheet_merge_cells(name).map(Ok),
+            SheetsEnum::FileLike(Sheets::Xlsx(f)) => f
+                .worksheet_merge_cells(name)
+                .map(|res| res.map_err(Error::Xlsx)),
+            _ => None,
+        }
+    }
 }
 
 #[pyclass]
@@ -156,7 +173,12 @@ impl CalamineWorkbook {
 
     fn get_sheet_by_name(&mut self, name: &str) -> PyResult<CalamineSheet> {
         let range = self.sheets.worksheet_range(name).map_err(err_to_py)?;
-        Ok(CalamineSheet::new(name.to_owned(), range))
+        let merged_cells = self
+            .sheets
+            .worksheet_merged_cells(name)
+            .map(|res| res.map_err(err_to_py))
+            .transpose()?;
+        Ok(CalamineSheet::new(name.to_owned(), range, merged_cells))
     }
 
     fn get_sheet_by_index(&mut self, index: usize) -> PyResult<CalamineSheet> {

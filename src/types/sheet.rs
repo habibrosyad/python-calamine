@@ -1,10 +1,10 @@
 use std::fmt::Display;
 use std::sync::Arc;
 
-use calamine::{Data, Range, Rows, SheetType, SheetVisible};
+use calamine::{Data, Dimensions, Range, Rows, SheetType, SheetVisible};
 use pyo3::class::basic::CompareOp;
 use pyo3::prelude::*;
-use pyo3::types::PyList;
+use pyo3::types::{PyList, PyTuple};
 
 use crate::CellValue;
 
@@ -120,13 +120,15 @@ pub struct CalamineSheet {
     #[pyo3(get)]
     name: String,
     range: Arc<Range<Data>>,
+    merged_cells: Arc<Option<Vec<Dimensions>>>,
 }
 
 impl CalamineSheet {
-    pub fn new(name: String, range: Range<Data>) -> Self {
+    pub fn new(name: String, range: Range<Data>, merge_cells: Option<Vec<Dimensions>>) -> Self {
         CalamineSheet {
             name,
             range: Arc::new(range),
+            merged_cells: Arc::new(merge_cells),
         }
     }
 }
@@ -195,6 +197,24 @@ impl CalamineSheet {
                 PyList::new_bound(slf.py(), row.iter().map(<&Data as Into<CellValue>>::into))
             }),
         ))
+    }
+
+    #[getter]
+    fn merged_cells(slf: PyRef<'_, Self>) -> PyResult<Option<Py<PyList>>> {
+        let merged_cells = slf.merged_cells.as_ref().as_ref();
+
+        match merged_cells {
+            Some(cells) => {
+                let py_list = PyList::empty_bound(slf.py());
+
+                for dim in cells {
+                    let py_tuple = PyTuple::new_bound(slf.py(), &[dim.start, dim.end]);
+                    py_list.append(py_tuple)?;
+                }
+                Ok(Some(py_list.into()))
+            }
+            None => Ok(None), // If there are no merge cells, return None
+        }
     }
 
     fn iter_rows(&self) -> CalamineCellIterator {

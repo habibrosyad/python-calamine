@@ -341,3 +341,27 @@ def test_path_or_filelike(obj):
 def test_path_or_filelike_error():
     with pytest.raises(TypeError):
         CalamineWorkbook.from_object(object())
+
+
+def test_xlsx_merged_cells():
+    data = [((0, 0), (0, 1)), ((1, 0), (3, 0)), ((1, 1), (3, 3))]
+
+    reader = CalamineWorkbook.from_object(PATH / "merged_cells.xlsx")
+
+    assert data == reader.get_sheet_by_index(0).merged_cells
+
+
+def test_xls_merged_cells():
+    data = [((0, 0), (0, 1)), ((1, 0), (3, 0)), ((1, 1), (3, 3))]
+
+    reader = CalamineWorkbook.from_object(PATH / "merged_cells.xls")
+
+    assert data == reader.get_sheet_by_index(0).merged_cells
+
+
+def test_ods_merged_cells():
+    data = None
+
+    reader = CalamineWorkbook.from_object(PATH / "merged_cells.ods")
+
+    assert data == reader.get_sheet_by_index(0).merged_cells

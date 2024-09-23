@@ -1,6 +1,6 @@
 [package]
 name = "python-calamine"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Dmitriy <dimastbk@proton.me>"]
 description = "Python binding for Rust's library for reading excel and odf file - calamine"
 edition = "2021"
@@ -14,7 +14,9 @@ name = "python_calamine"
 crate-type = ["cdylib"]
 
 [dependencies]
-calamine = { version = "0.25.0", features = ["dates"] }
+calamine = { git = "https://github.com/tafia/calamine", branch = "master", features = [
+    "dates",
+] }
 pyo3 = { version = "0.22.1", features = [
     "extension-module",
     "chrono",

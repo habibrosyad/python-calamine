@@ -34,7 +34,7 @@ python-source = "python"
 
 [tool.poetry]
 name = "python-calamine"
-version = "0.2.3"
+version = "0.2.4"
 description = ""
 authors = ["Dmitriy <dimastbk@proton.me>"]
 
@@ -46,4 +46,4 @@ packaging = "^23.1"
 maturin = "^1.0.1"
 pre-commit = "^3.0.1"
 pytest = "^8.0.0"
-pandas = {version = "^2.0.0", extras = ["excel"]}
+pandas = { version = "^2.0.0", extras = ["excel"] }
