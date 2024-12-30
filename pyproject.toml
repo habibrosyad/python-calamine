@@ -1,5 +1,6 @@
 [project]
 name = "python-calamine"
+version = "0.3.1"
 requires-python = ">=3.8"
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -11,17 +12,6 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-]
-dependencies = ["packaging>=23.1"]
-dynamic = ["version"]
-
-[project.optional-dependencies]
-dev = [
-  "maturin~=1.0",
-  "pre-commit~=3.0",
-  "pytest~=8.0",
-  "pandas[excel]~=2.0",
-  "numpy~=1.0",
 ]
 
 [tool.isort]
@@ -43,3 +33,20 @@ build-backend = "maturin"
 [tool.maturin]
 module-name = "python_calamine._python_calamine"
 python-source = "python"
+
+[tool.poetry]
+name = "python-calamine"
+version = "0.3.1"
+description = ""
+authors = ["Dmitriy <dimastbk@proton.me>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+packaging = "^23.1"
+
+[tool.poetry.group.dev.dependencies]
+maturin = "^1.7.4"
+pre-commit = "^3.0.1"
+pytest = "^8.0.0"
+pandas = { version = "^2.0.0", extras = ["excel"] }
+numpy = "^1.0.0"
